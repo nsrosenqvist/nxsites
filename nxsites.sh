@@ -321,8 +321,8 @@ help_msg() {
 }
 
 # Verify that nginx is installed
-#dpkg -s "nginx" >/dev/null 2>&1
-echo ""
+dpkg -s "nginx" >/dev/null 2>&1
+
 if [ $? -eq 0 ]; then
     # Create a templates.d directory in the Nginx config directory if it doesn't exist
     if [ ! -e "$NGINX_TEMPL_DIR" ]; then
