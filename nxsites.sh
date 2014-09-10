@@ -25,15 +25,16 @@ NGINX_CONF_DIR="$(cd "$(dirname "$NGINX_CONF_FILE")" && pwd)"
 NGINX_TEMPL_DIR="$NGINX_CONF_DIR/templates.d/"
 SELECTED_SITE="$2"
 
-# Create a templates.d directory in the Nginx config directory if it doesn't exist
-if [ ! -e "$NGINX_TEMPL_DIR" ]; then
-    mkdir "$NGINX_TEMPL_DIR"
-fi
+#/ Echo error message #/
+function error() {
+    echo -e "\033[1;31mError! $@\033[m" 1>&2
+    return $?
+}
 
 #/ Enable the specified site if it exists #/
 function enable_site() {
     if [ -z "$SELECTED_SITE" ]; then
-        echo "Error! You must specify a site"
+        error "You must specify a site"
         return 1
     fi
 
@@ -48,12 +49,12 @@ function enable_site() {
                 echo "$SELECTED_SITE enabled"
                 return 0
             else
-                echo "Error! Failed to enabled $SELECTED_SITE"
+                error "Failed to enabled $SELECTED_SITE"
                 return 1
             fi
         fi
     else
-        echo "$SELECTED_SITE isn't defined"
+        error "$SELECTED_SITE isn't defined"
         return 1
     fi
 }
@@ -61,7 +62,7 @@ function enable_site() {
 #/ Disable the specified site if it exists #/
 function disable_site() {
     if [ -z "$SELECTED_SITE" ]; then
-        echo "Error! You must specify a site"
+        error "You must specify a site"
         return 1
     fi
 
@@ -76,12 +77,12 @@ function disable_site() {
                 echo "$SELECTED_SITE disabled"
                 return 0
             else
-                echo "Error! Failed to disable $SELECTED_SITE"
+                error "Failed to disable $SELECTED_SITE"
                 return 1
             fi
         fi
     else
-        echo "$SELECTED_SITE isn't defined"
+        error "$SELECTED_SITE isn't defined"
         return 1
     fi
 }
@@ -102,7 +103,7 @@ function create_site() {
     fi
 
     if [ -z "$SELECTED_SITE" ]; then
-        echo "Error! You must specify a site"
+        error "You must specify a site"
         return 1
     fi
 
@@ -111,7 +112,7 @@ function create_site() {
             if [ -f "$NGINX_TEMPL_DIR/$template" ]; then
                 cp "$NGINX_TEMPL_DIR/$template" "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
             else
-                echo "Error! The template \"$template\" isn't defined"
+                error "The template \"$template\" isn't defined"
                 return 1
             fi
         fi
@@ -119,7 +120,7 @@ function create_site() {
         editor "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
         return 0
     else
-        echo "Error! $SELECTED_SITE already exists"
+        error "$SELECTED_SITE already exists"
         return 1
     fi
 }
@@ -127,7 +128,7 @@ function create_site() {
 #/ Launches a editor instance with the specified file #/
 function edit_site() {
     if [ -z "$SELECTED_SITE" ]; then
-        echo "Error! You must specify a site"
+        error "You must specify a site"
         return 1
     fi
 
@@ -135,7 +136,7 @@ function edit_site() {
         editor "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
         return $?
     else
-        echo "$SELECTED_SITE isn't defined"
+        error "$SELECTED_SITE isn't defined"
         return 1
     fi
 }
@@ -143,7 +144,7 @@ function edit_site() {
 #/ Deletes the selected site after the user's confirmation #/
 function delete_site() {
     if [ -z "$SELECTED_SITE" ]; then
-        echo "Error! You must specify a site"
+        error "You must specify a site"
         return 1
     fi
 
@@ -162,7 +163,8 @@ function delete_site() {
                 if [ $result -eq 0 ]; then
                     echo -e "\n$SELECTED_SITE successfully deleted"
                 else
-                    echo -e "\nError! Failed to delete $SELECTED_SITE"
+                    echo ""
+                    error "Failed to delete $SELECTED_SITE"
                 fi
 
                 return $result
@@ -173,7 +175,7 @@ function delete_site() {
             ;;
         esac
     else
-        echo "$SELECTED_SITE isn't defined"
+        error "$SELECTED_SITE isn't defined"
         return 1
     fi
 }
@@ -317,6 +319,19 @@ help_msg() {
     echo -e "\n\tIt is assumed you are using the default sites-enabled and sites-available configuration.\n"
     return 0
 }
+
+# Verify that nginx is installed
+#dpkg -s "nginx" >/dev/null 2>&1
+echo ""
+if [ $? -eq 0 ]; then
+    # Create a templates.d directory in the Nginx config directory if it doesn't exist
+    if [ ! -e "$NGINX_TEMPL_DIR" ]; then
+        mkdir "$NGINX_TEMPL_DIR"
+    fi
+else
+    error "Nginx is not installed"
+    exit 1
+fi
 
 # Main
 case "$1" in

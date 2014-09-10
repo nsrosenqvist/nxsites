@@ -1,0 +1,101 @@
+#!/bin/bash
+
+#-----------------------------------------------------------------------------------#
+# An utility to easily manage Nginx servers with the functionality of
+# a2ensite and a2dissite for Apache, but for Nginx, including a bunch of extra features.
+# Copyright (C) 2014 Niklas Rosenqvist
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#-----------------------------------------------------------------------------------#
+
+_nxsites()
+{
+    #Verify that nginx is installed
+    dpkg -s "nginx" >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    local nginx_conf_file="$(awk -F= -v RS=' ' '/conf-path/ {print $2}' <<< $(nginx -V 2>&1))"
+    local nginx_conf_dir="$(cd "$(dirname "$nginx_conf_file")" && pwd)"
+    local nginx_templ_dir="$nginx_conf_dir/templates.d/"
+    local cur prev opts base
+    COMPREPLY=()
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    old="${COMP_WORDS[COMP_CWORD-2]}"
+    opts="enable disable edit create delete list templates test reload restart status help"
+
+    case "${prev}" in
+        enable)
+            local sites=""
+            local filename=""
+
+            while IFS= read -r file; do
+                filename="$(basename "$file")"
+
+                if [ ! -h "$nginx_conf_dir/sites-enabled/$filename" ]; then
+                    sites+="$(basename "$file") "
+                fi
+            done < <(find "$nginx_conf_dir/sites-available/" -maxdepth 1 -type f | sort -V)
+
+            COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
+            return 0
+        ;;
+        disable)
+            local sites=""
+
+            while IFS= read -r file; do
+                sites+="$(basename "$file") "
+            done < <(find "$nginx_conf_dir/sites-enabled/" -maxdepth 1 -type l | sort -V)
+
+            COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
+            return 0
+        ;;
+        edit|delete)
+            local sites=""
+
+            while IFS= read -r file; do
+                sites+="$(basename "$file") "
+            done < <(find "$nginx_conf_dir/sites-available/" -maxdepth 1 -type f | sort -V)
+
+            COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
+            return 0
+        ;;
+        *)
+            if [ "$prev" = "nxsites" ]; then
+                COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+                return 0
+            else
+                if [ "$old" = "create" ]; then
+                    local templates=""
+                    while IFS= read -r file; do
+                        templates+="$(basename "$file") "
+                    done < <(find "$nginx_templ_dir/" -maxdepth 1 -type f | sort -V)
+
+                    COMPREPLY=( $(compgen -W "${templates}" -- ${cur}) )
+                    return 0
+                else
+                    return 1
+                fi
+            fi
+        ;;
+    esac
+
+
+}
+
+complete -F _nxsites nxsites

@@ -22,11 +22,13 @@ install:
 	cp "$(FILE_NAME)" "$(INSTALL_DIR)/$(PKG_NAME)"
 	chmod 0755 "$(INSTALL_DIR)/$(PKG_NAME)"
 	chmod +x "$(INSTALL_DIR)/$(PKG_NAME)"
+	cp "bash_completion.d/$(NAME)" "/etc/bash_completion.d/$(NAME)"
 
 	@echo
 	@echo "$(NAME) $(VERSION) successfully installed to $(INSTALL_DIR)"
 
 uninstall:
 	rm -f "$(INSTALL_DIR)/$(PKG_NAME)"
+	rm -f "/etc/bash_completion.d/$(NAME)"
 
 .PHONY: tag install uninstall
