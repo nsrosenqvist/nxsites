@@ -35,7 +35,7 @@ Action                        | Explanation
 
 ## Development
 
-Feel free to make pull requests with your own contributions. If you want to help out and don't know what to do you can try to tackle an issue from the [issue tracker](https://github.com/nsrosenqvist/shocker/issues).
+Feel free to make pull requests with your own contributions. If you want to help out and don't know what to do you can try to tackle an issue from the [issue tracker](https://github.com/nsrosenqvist/nxsites/issues).
 
 ## Notice
 
