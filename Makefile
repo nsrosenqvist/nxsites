@@ -8,25 +8,25 @@ FILE_NAME=$(NAME).sh
 PKG_NAME=$(NAME)
 
 all::
-    @echo ""
+	@echo ""
 
 tag:
-    git tag v$(VERSION)
-    git push --tags
+	git tag v$(VERSION)
+	git push --tags
 
 install:
-    @echo "Installing $(NAME) $(VERSION)..."
-    @echo
+	@echo "Installing $(NAME) $(VERSION)..."
+	@echo
 
-    mkdir -p "$(INSTALL_DIR)"
-    cp "$(FILE_NAME)" "$(INSTALL_DIR)/$(PKG_NAME)"
-    chmod 0755 "$(INSTALL_DIR)/$(PKG_NAME)"
-    chmod +x "$(INSTALL_DIR)/$(PKG_NAME)"
+	mkdir -p "$(INSTALL_DIR)"
+	cp "$(FILE_NAME)" "$(INSTALL_DIR)/$(PKG_NAME)"
+	chmod 0755 "$(INSTALL_DIR)/$(PKG_NAME)"
+	chmod +x "$(INSTALL_DIR)/$(PKG_NAME)"
 
-    @echo
-    @echo "$(NAME) $(VERSION) successfully installed to $(INSTALL_DIR)"
+	@echo
+	@echo "$(NAME) $(VERSION) successfully installed to $(INSTALL_DIR)"
 
 uninstall:
-    rm -f "$(INSTALL_DIR)/$(PKG_NAME)"
+	rm -f "$(INSTALL_DIR)/$(PKG_NAME)"
 
 .PHONY: tag install uninstall

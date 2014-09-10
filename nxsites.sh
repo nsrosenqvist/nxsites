@@ -21,7 +21,7 @@
 #-----------------------------------------------------------------------------------#
 
 NGINX_CONF_FILE="$(awk -F= -v RS=' ' '/conf-path/ {print $2}' <<< $(nginx -V 2>&1))"
-NGINX_CONF_DIR="$(dirname "$NGINX_CONF_FILE")"
+NGINX_CONF_DIR="$(cd "$(dirname "$NGINX_CONF_FILE")" && pwd)"
 NGINX_TEMPL_DIR="$NGINX_CONF_DIR/templates.d/"
 SELECTED_SITE="$2"
 
@@ -333,9 +333,10 @@ case "$1" in
     status) status;;
     help|-h|--help) help_msg;;
     *)
-        echo -e "No options selected\n"
+        echo -e "\nNo options selected"
         help_msg
         exit 1
     ;;
 esac
+
 exit $?
