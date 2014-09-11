@@ -24,6 +24,7 @@ NGINX_CONF_FILE="$(awk -F= -v RS=' ' '/conf-path/ {print $2}' <<< $(nginx -V 2>&
 NGINX_CONF_DIR="$(cd "$(dirname "$NGINX_CONF_FILE")" && pwd)"
 NGINX_TEMPL_DIR="$NGINX_CONF_DIR/templates.d/"
 SELECTED_SITE="$2"
+VERSION="v1.1.1"
 
 #/ Echo error message #/
 function error() {
@@ -186,6 +187,7 @@ function list_sites() {
     local sites=()
     local moddate=""
     local sitestate=""
+    local enableddate=""
 
     while IFS= read -r file; do
         sites+=("$(basename "$file")")
@@ -200,7 +202,8 @@ function list_sites() {
     echo ""
     echo -n "$(pad_string "Site:" $maxsitelen)"
     echo -n "$(pad_string "State:" 12)"
-    echo "$(pad_string "Modified:" 15)"
+    echo -n "$(pad_string "Enabled:" 23)"
+    echo "$(pad_string "Modified:" 23)"
 
     for i in "${sites[@]}"; do
         # Site name
@@ -215,10 +218,20 @@ function list_sites() {
 
         echo -n "$(pad_string "$sitestate" 12)"
 
+        # Site enabled date
+        if [ "$sitestate" = "enabled" ]; then
+            enableddate="$(stat -c "%y" "$NGINX_CONF_DIR/sites-enabled/$i")"
+            enableddate="${enableddate%%.*}"
+        else
+            enableddate=""
+        fi
+
+        echo -n "$(pad_string "$enableddate" 23)"
+
         # Modification date
         moddate="$(stat -c "%y" "$NGINX_CONF_DIR/sites-available/$i")"
         moddate="${moddate%%.*}"
-        echo "$(pad_string "$moddate" 5)"
+        echo "$(pad_string "$moddate" 23)"
     done
 
     echo ""
@@ -302,7 +315,7 @@ function take_if_higher() {
 
 #/ Prints out a message about the applications usage #/
 help_msg() {
-    echo -e "\nUsage: ${0##*/} [options]"
+    echo -e "\nNXSites $VERSION - Usage: ${0##*/} [options]"
     echo "Options:"
     echo -e "\t$(pad_string "<enable>  <site>" 30) Enable site"
     echo -e "\t$(pad_string "<disable> <site>" 30) Disable site"
@@ -315,6 +328,7 @@ help_msg() {
     echo -e "\t$(pad_string "<reload>" 30) Reload nginx config"
     echo -e "\t$(pad_string "<restart>" 30) Restart nginx server"
     echo -e "\t$(pad_string "<status>" 30) Show nginx status and site list"
+    echo -e "\t$(pad_string "<version>" 30) Show nxsites version"
     echo -e "\t$(pad_string "<help>" 30) Display help"
     echo -e "\n\tIt is assumed you are using the default sites-enabled and sites-available configuration.\n"
     return 0
@@ -346,6 +360,7 @@ case "$1" in
     reload) reload_config;;
     restart) restart_server;;
     status) status;;
+    version|-v|--version) echo "$VERSION";;
     help|-h|--help) help_msg;;
     *)
         echo -e "\nNo options selected"

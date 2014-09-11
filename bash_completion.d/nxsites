@@ -37,7 +37,7 @@ _nxsites()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     old="${COMP_WORDS[COMP_CWORD-2]}"
-    opts="enable disable edit create delete list templates test reload restart status help"
+    opts="enable disable edit create delete list templates test reload restart status version help"
 
     case "${prev}" in
         enable)
@@ -50,7 +50,7 @@ _nxsites()
                 if [ ! -h "$nginx_conf_dir/sites-enabled/$filename" ]; then
                     sites+="$(basename "$file") "
                 fi
-            done < <(find "$nginx_conf_dir/sites-available/" -maxdepth 1 -type f | sort -V)
+            done < <(find "$nginx_conf_dir/sites-available/" -maxdepth 1 -type f)
 
             COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
             return 0
@@ -60,7 +60,7 @@ _nxsites()
 
             while IFS= read -r file; do
                 sites+="$(basename "$file") "
-            done < <(find "$nginx_conf_dir/sites-enabled/" -maxdepth 1 -type l | sort -V)
+            done < <(find "$nginx_conf_dir/sites-enabled/" -maxdepth 1 -type l)
 
             COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
             return 0
@@ -70,7 +70,7 @@ _nxsites()
 
             while IFS= read -r file; do
                 sites+="$(basename "$file") "
-            done < <(find "$nginx_conf_dir/sites-available/" -maxdepth 1 -type f | sort -V)
+            done < <(find "$nginx_conf_dir/sites-available/" -maxdepth 1 -type f)
 
             COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
             return 0
@@ -84,7 +84,7 @@ _nxsites()
                     local templates=""
                     while IFS= read -r file; do
                         templates+="$(basename "$file") "
-                    done < <(find "$nginx_templ_dir/" -maxdepth 1 -type f | sort -V)
+                    done < <(find "$nginx_templ_dir/" -maxdepth 1 -type f)
 
                     COMPREPLY=( $(compgen -W "${templates}" -- ${cur}) )
                     return 0

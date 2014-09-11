@@ -31,6 +31,7 @@ Action                        | Explanation
 `<reload>`                    | Reload nginx config
 `<restart>`                   | Restart nginx server
 `<status>`                    | Show nginx status and site list
+`<version>`                   | Show nxsites version
 `<help>`                      | Display help
 
 ## Development
