@@ -40,4 +40,4 @@ Feel free to make pull requests with your own contributions. If you want to help
 
 ## Notice
 
-The program is licensed under LGPL v2.1, please refer to the LICENSE file for more information.
+The program is licensed under GPLv2, please refer to the LICENSE file for more information.
