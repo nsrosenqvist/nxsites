@@ -18,21 +18,21 @@ make && sudo make install
 
 The first parameter is what action you want to perform. The second parameter is the site name and the third is only used with the `create` action and lets you base your site of a template.
 
-Action                        | Explanation
------------------------------ | ------------------------------------------------------
-`<enable>  <site>`            | Enable site
-`<disable> <site>`            | Disable site
-`<edit>    <site>`            | Edit site
-`<create>  <site> [template]` | Create a site - optionally from a pre-defined template
-`<delete>  <site>`            | Delete site
-`<list>`                      | List sites
-`<templates>`                 | List site templates
-`<test>`                      | Test nginx config
-`<reload>`                    | Reload nginx config
-`<restart>`                   | Restart nginx server
-`<status>`                    | Show nginx status and site list
-`<version>`                   | Show nxsites version
-`<help>`                      | Display help
+Action                      | Explanation
+----------------------------| ------------------------------------------------------
+`enable  <site>`            | Enable site
+`disable <site>`            | Disable site
+`edit    <site>`            | Edit site
+`create  <site> [template]` | Create a site - optionally from a pre-defined template
+`delete  <site>`            | Delete site
+`list`                      | List sites
+`templates`                 | List site templates
+`test`                      | Test nginx config
+`reload`                    | Reload nginx config
+`restart`                   | Restart nginx server
+`status`                    | Show nginx status and site list
+`version`                   | Show nxsites version
+`help`                      | Display help
 
 ## Development
 
