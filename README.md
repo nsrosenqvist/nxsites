@@ -16,7 +16,7 @@ make && sudo make install
 
 ## Usage
 
-The first parameter is what action you want to perform. The second parameter is the site name and the third is only used with the `create` action and lets you base your site of a template.
+The first parameter is what action you want to perform. The second parameter is the site name and the third is only used with the `create` and `copy` actions and lets you base your site of a template.
 
 Action                      | Explanation
 ----------------------------| ------------------------------------------------------
