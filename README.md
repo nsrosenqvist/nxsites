@@ -23,7 +23,9 @@ Action                      | Explanation
 `enable  <site>`            | Enable site
 `disable <site>`            | Disable site
 `edit    <site>`            | Edit site
+`show    <site>`            | Show the site's configuration
 `create  <site> [template]` | Create a site - optionally from a pre-defined template
+`copy    <site> <new site>` | Create a site based on an existing configuration
 `delete  <site>`            | Delete site
 `list`                      | List sites
 `templates`                 | List site templates

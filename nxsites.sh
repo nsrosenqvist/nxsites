@@ -110,7 +110,7 @@ function create_site() {
 
     if [ ! -f "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE" ]; then
         if [ -n "$template" ]; then
-            if [ "${template:0:1}" = "/"]; then
+            if [ "${template:0:1}" = "/" ]; then
                 if [ -f "$template" ]; then
                     cp "$template" "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
                 else
@@ -189,6 +189,7 @@ function show_site() {
     fi
 
     if [ -f "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE" ]; then
+        echo -e "\n$SELECTED_SITE:\n"
         cat "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
         return $?
     else
