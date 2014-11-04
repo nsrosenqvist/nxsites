@@ -159,7 +159,7 @@ function copy_site() {
     # Flip around the parameters
     local temp="$SELECTED_SITE"
     SELECTED_SITE="$base"
-    base="$temp"
+    base="$NGINX_CONF_DIR/sites-available/$temp"
 
     create_site "$base"
     return $?
