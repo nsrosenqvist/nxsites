@@ -1,7 +1,7 @@
 NXSites
 =======
 
-An utility to easily manage Nginx servers with the functionality of a2ensite and a2dissite for Apache, but for Nginx, including a bunch of extra features.
+An utility to easily manage Nginx servers with the functionality of a2ensite and a2dissite for Apache, but for Nginx, including a bunch of extra features, like BASH autocompletion.
 
 It is assumed that nginx is configured with the standard sites-available and sites-enabled directory layout and that nginx is controlled via upstart. If you want to implement so that it can work with several init systems then I gladly accept the patches.
 
