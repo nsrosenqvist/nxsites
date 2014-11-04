@@ -110,11 +110,20 @@ function create_site() {
 
     if [ ! -f "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE" ]; then
         if [ -n "$template" ]; then
-            if [ -f "$NGINX_TEMPL_DIR/$template" ]; then
-                cp "$NGINX_TEMPL_DIR/$template" "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
+            if [ "${template:0:1}" = "/"]; then
+                if [ -f "$template" ]; then
+                    cp "$template" "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
+                else
+                    error "The base file \"$template\" doesn't exist"
+                    return 1
+                fi
             else
-                error "The template \"$template\" isn't defined"
-                return 1
+                if [ -f "$NGINX_TEMPL_DIR/$template" ]; then
+                    cp "$NGINX_TEMPL_DIR/$template" "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
+                else
+                    error "The template \"$template\" isn't defined"
+                    return 1
+                fi
             fi
         fi
 
@@ -126,6 +135,36 @@ function create_site() {
     fi
 }
 
+#/
+# Create a new site based of an already defined site
+#
+# This method is basically a wrapper around create_site() and instead of a
+# template name we provide an absolute path to the file "template".
+#
+# @param int $1 The new site name
+#/
+function copy_site() {
+    local base="$1"
+
+    if [ -z "$SELECTED_SITE" ]; then
+        error "You must specify a site to copy"
+        return 1
+    fi
+
+    if [ -z "$base" ]; then
+        error "You must specify a name for the new site"
+        return 1
+    fi
+
+    # Flip around the parameters
+    local temp="$SELECTED_SITE"
+    SELECTED_SITE="$base"
+    base="$temp"
+
+    create_site "$base"
+    return $?
+}
+
 #/ Launches a editor instance with the specified file #/
 function edit_site() {
     if [ -z "$SELECTED_SITE" ]; then
@@ -135,6 +174,22 @@ function edit_site() {
 
     if [ -f "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE" ]; then
         editor "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
+        return $?
+    else
+        error "$SELECTED_SITE isn't defined"
+        return 1
+    fi
+}
+
+#/ Cats the site's configuration file #/
+function show_site() {
+    if [ -z "$SELECTED_SITE" ]; then
+        error "You must specify a site"
+        return 1
+    fi
+
+    if [ -f "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE" ]; then
+        cat "$NGINX_CONF_DIR/sites-available/$SELECTED_SITE"
         return $?
     else
         error "$SELECTED_SITE isn't defined"
@@ -320,7 +375,9 @@ help_msg() {
     echo -e "\t$(pad_string "<enable>  <site>" 30) Enable site"
     echo -e "\t$(pad_string "<disable> <site>" 30) Disable site"
     echo -e "\t$(pad_string "<edit>    <site>" 30) Edit site"
+    echo -e "\t$(pad_string "<show>    <site>" 30) Show the site's configuration"
     echo -e "\t$(pad_string "<create>  <site> [template]" 30) Create a site - optionally from a pre-defined template"
+    echo -e "\t$(pad_string "<copy>    <site> <new site>" 30) Create a site based on an existing configuration"
     echo -e "\t$(pad_string "<delete>  <site>" 30) Delete site"
     echo -e "\t$(pad_string "<list>" 30) List sites"
     echo -e "\t$(pad_string "<templates>" 30) List site templates"
@@ -352,7 +409,9 @@ case "$1" in
     enable) enable_site;;
     disable) disable_site;;
     edit) edit_site;;
+    show) show_site;;
     create) create_site "$3";;
+    copy) copy_site "$3";;
     delete) delete_site;;
     list|-l|--list) list_sites;;
     templates) list_templates;;

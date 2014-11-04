@@ -37,7 +37,7 @@ _nxsites()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     old="${COMP_WORDS[COMP_CWORD-2]}"
-    opts="enable disable edit create delete list templates test reload restart status version help"
+    opts="enable disable edit show create copy delete list templates test reload restart status version help"
 
     case "${prev}" in
         enable)
@@ -65,7 +65,7 @@ _nxsites()
             COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
             return 0
         ;;
-        edit|delete)
+        edit|delete|show|copy)
             local sites=""
 
             while IFS= read -r file; do
@@ -94,8 +94,6 @@ _nxsites()
             fi
         ;;
     esac
-
-
 }
 
 complete -F _nxsites nxsites
