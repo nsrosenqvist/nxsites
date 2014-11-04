@@ -412,9 +412,9 @@ case "$1" in
     edit) edit_site;;
     show) show_site;;
     create) create_site "$3";;
-    copy) copy_site "$3";;
+    copy|cp) copy_site "$3";;
     delete) delete_site;;
-    list|-l|--list) list_sites;;
+    list|-l|--list|ls) list_sites;;
     templates) list_templates;;
     test) test_config;;
     reload) reload_config;;
