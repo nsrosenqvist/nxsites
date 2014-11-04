@@ -65,7 +65,7 @@ _nxsites()
             COMPREPLY=( $(compgen -W "${sites}" -- ${cur}) )
             return 0
         ;;
-        edit|delete|show|copy)
+        edit|delete|show|copy|cp)
             local sites=""
 
             while IFS= read -r file; do
